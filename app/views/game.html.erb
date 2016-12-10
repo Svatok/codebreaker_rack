@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Codebreaker</title>
+</head>
+<body>
+  <h3 class="text-center">
+    You have <%= @game.attempts.to_s %> attempts
+  </h3>
+  <table class="table table-hover">
+    <tr>
+      <td><%= @game_msg unless @game_msg.nil? %></td>
+    </tr>
+    <tr class="info">
+      <td><h5><%= @request.params['guess'] unless @request.params['guess'].nil? %></h5></td>
+      <td><h5><%= @game.marking_guess unless @game.marking_guess.nil? %></h5></td>
+    </tr>
+  </table>
+  <form class="form" name="guess_form" method="post" action="/game">
+    <input type="text" name="guess" placeholder="Please, enter guess" required>
+    <input type="submit" name="submit" value="Ok">
+  </form>
+  <%= '<a href="/save">Save score</a>' if @game.end_of_game? %>
+  <%= '<a href="/hint">Hint</a>' if @game.hint %>
+  <a href="/restart">Restart</a>
+  <a href="/exit">Exit</a>
+</body>
+</html>

@@ -1,0 +1,11 @@
+codebreaker_name=Svatok;secret_code=4553;marking_guess=++++;attempts=7;hint=used;game_date=20/11/2016
+codebreaker_name=svatok;secret_code=2662;marking_guess=++;attempts=0;hint=not used;game_date=20/11/2016
+codebreaker_name=ssds;secret_code=5466;marking_guess=++++;attempts=8;hint=not used;game_date=20/11/2016
+codebreaker_name=Test;secret_code=1431;marking_guess=++++;attempts=10;hint=not used;game_date=10/12/2016
+codebreaker_name=Test;secret_code=1255;marking_guess=++++;attempts=10;hint=not used;game_date=10/12/2016
+codebreaker_name=Svatok;secret_code=5165;marking_guess=++++;attempts=4;hint=used;game_date=10/12/2016
+codebreaker_name=Svatok;secret_code=2234;marking_guess=++++;attempts=6;hint=used;game_date=10/12/2016
+codebreaker_name=Svatok;secret_code=2234;marking_guess=++++;attempts=6;hint=used;game_date=10/12/2016
+codebreaker_name=Svat;secret_code=4212;marking_guess=+;attempts=0;hint=not used;game_date=10/12/2016
+codebreaker_name=Svat;secret_code=4212;marking_guess=+;attempts=0;hint=not used;game_date=10/12/2016
+codebreaker_name=Test;secret_code=3346;marking_guess=++++;attempts=10;hint=not used;game_date=10/12/2016

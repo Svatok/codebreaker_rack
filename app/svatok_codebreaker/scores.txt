@@ -9,3 +9,4 @@ codebreaker_name=Svatok;secret_code=2234;marking_guess=++++;attempts=6;hint=used
 codebreaker_name=Svat;secret_code=4212;marking_guess=+;attempts=0;hint=not used;game_date=10/12/2016
 codebreaker_name=Svat;secret_code=4212;marking_guess=+;attempts=0;hint=not used;game_date=10/12/2016
 codebreaker_name=Test;secret_code=3346;marking_guess=++++;attempts=10;hint=not used;game_date=10/12/2016
+codebreaker_name=Svatok;secret_code=1556;marking_guess=+;attempts=0;hint=not used;game_date=12/12/2016

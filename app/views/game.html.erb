@@ -5,22 +5,26 @@
   <title>Codebreaker</title>
 </head>
 <body>
-  <h3 class="text-center">
-    You have <%= @game.attempts.to_s %> attempts
-  </h3>
-  <table class="table table-hover">
-    <tr>
-      <td><%= @game_msg unless @game_msg.nil? %></td>
-    </tr>
-    <tr class="info">
-      <td><h5><%= @request.session[:guess] unless @request.session[:guess].nil? %></h5></td>
-      <td><h5><%= @game.marking_guess unless @game.marking_guess.nil? %></h5></td>
-    </tr>
-  </table>
-  <form class="form" name="guess_form" method="post" action="/game">
-    <input type="text" name="guess" placeholder="Please, enter guess" required>
-    <input type="submit" name="submit" value="Ok">
-  </form>
+  <% if @game.end_of_game? %>
+    <h2><%= game_completition %> </h2>
+  <% else %>
+    <h3 class="text-center">
+      You have <%= @game.attempts.to_s %> attempts
+    </h3>
+    <table class="table table-hover">
+      <tr>
+        <td><%= @game_msg unless @game_msg.nil? %></td>
+      </tr>
+      <tr class="info">
+        <td><h5><%= @request.session[:guess] unless @request.session[:guess].nil? %></h5></td>
+        <td><h5><%= @app_message.show(:message_guess, @game.get_game_data) unless @game.marking_guess.nil? %></h5></td>
+      </tr>
+    </table>
+    <form class="form" name="guess_form" method="post" action="/game">
+      <input type="text" name="guess" placeholder="Please, enter guess" required autofocus>
+      <input type="submit" name="submit" value="Ok">
+    </form>
+  <% end %>
   <%= '<a href="/save">Save score</a>' if @game.end_of_game? %>
   <%= '<a href="/hint">Hint</a>' if @game.hint %>
   <a href="/restart">Restart</a>

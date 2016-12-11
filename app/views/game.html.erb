@@ -13,7 +13,7 @@
       <td><%= @game_msg unless @game_msg.nil? %></td>
     </tr>
     <tr class="info">
-      <td><h5><%= @request.params['guess'] unless @request.params['guess'].nil? %></h5></td>
+      <td><h5><%= @request.session[:guess] unless @request.session[:guess].nil? %></h5></td>
       <td><h5><%= @game.marking_guess unless @game.marking_guess.nil? %></h5></td>
     </tr>
   </table>

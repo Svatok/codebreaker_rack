@@ -1,0 +1,77 @@
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+ color: #686461;
+}
+
+.attempts_history {
+ border-collapse: collapse;
+ color: #686461;
+ width: 100%;
+}
+
+.attempts_history th {
+ border-bottom: 3px solid #B9B29F;
+ padding: 10px;
+ text-align: left;
+}
+td {
+ padding: 10px;
+}
+
+input {
+ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+ color: #686461;
+ font-weight: bold;
+ padding: 6px 4px 4px 4px;
+ border: 1px solid #cecece;
+ background: #F6F6f6;
+ border-radius: 8px;
+ padding-bottom: 5px\0;
+ text-align: center;
+ font-size: 18px;
+}
+.form_guess input[type=text] {
+ width: 120px;
+ margin-right: 10px;
+ margin-bottom: 10px;
+}
+.form_guess input[type=submit] {
+ width: 50px;
+ cursor:pointer;
+}
+.login_form input[type=text] {
+ width: 280px;
+}
+.login_form input[type=submit] {
+ width: 180px;
+ cursor:pointer;
+}
+.dialog_content {
+  width: 100%;
+  margin-bottom: 30px;
+}
+.dialog_content td {
+width: calc(100%/3);
+}
+a {
+ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+ color: #F6F6f6;
+ font-weight: bold;
+ padding: 10px;
+ border: 1px solid #cecece;
+ background: #B9B29F;
+ border-radius: 8px;
+
+}
+.message {
+font-size: 22px;
+ font-weight: bold;
+width: 100%;
+}
+.hint, .menu {
+ font-size: 18px;
+ text-align: right;
+}

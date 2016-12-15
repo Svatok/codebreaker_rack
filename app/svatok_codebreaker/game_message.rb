@@ -17,13 +17,18 @@ module SvatokCodebreaker
       'Enter a guess:'
     end
 
+    def game_end(game_data)
+      return win if game_data[:marking_guess] == '++++'
+      lose(game_data[:secret_code])
+    end
+
     def win
       'Congratulations! You win!'
     end
 
-    def lose(game_data)
+    def lose(secret_code)
       'Sorry, but you lose :(</br>' +
-      'Secret code is ' + game_data[:secret_code] + '</br>'
+      'Secret code is ' + secret_code + '</br>'
     end
 
     def restart_game
@@ -35,11 +40,7 @@ module SvatokCodebreaker
     end
 
     def saved
-      'Score saved!'
-    end
-
-    def no_match
-      'Sorry, but there is no match...'
+      'Result saved!'
     end
 
     def no_hint
@@ -47,7 +48,7 @@ module SvatokCodebreaker
     end
 
     def message_guess(game_data)
-      return 'Sorry, but there is no match...' if game_data[:marking_guess] == ''
+      return 'No match' if game_data[:marking_guess] == ''
       game_data[:marking_guess]
     end
   end

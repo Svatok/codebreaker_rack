@@ -9,12 +9,12 @@ class Racker
 
   def initialize(env)
     @request = Rack::Request.new(env)
-    @exit_game = @request.session[:exit_game].nil?
-    @request.session[:menu_commands] ||= %w(exit restart hint save)
-    @game_msg = @request.session[:game_msg]
     @app_message = SvatokCodebreaker::GameMessage.new
+    @exit_game = @request.session[:exit_game].nil?
     @game = @request.session[:game]
-    @request.session[:guess] = @request.params['guess'] unless @request.params['guess'].nil?
+    @game_msg = @request.session[:game_msg]
+    @hint = @request.session[:hint]
+    @answers = @request.session[:answers].nil? ? [] : @request.session[:answers]
   end
 
   def response
@@ -42,7 +42,9 @@ class Racker
       start_game
     else
       game_step
-      Rack::Response.new(render("game.html.erb"))
+      @request.session[:answers] = @answers
+      @request.session[:game_msg] = @game_msg
+      Rack::Response.new(render('game.html.erb'))
     end
   end
 
@@ -52,7 +54,7 @@ class Racker
     @request.session[:exit_game] = false
     @game = @request.session[:game]
     @game_msg = @app_message.show(:start)
-    Rack::Response.new(render("game.html.erb"))
+    Rack::Response.new(render('game.html.erb'))
   end
 
   def game_step
@@ -60,16 +62,18 @@ class Racker
     return if answer.nil?
     return @game_msg = @app_message.show(:not_valid_answer) unless @game.valid_guess?(answer)
     @game.submit_guess(answer)
-    @game_msg = @app_message.show(:next_step) unless @game.end_of_game?
-  end
-
-  def game_completition
-    return @app_message.show(:win) if @game.marking_guess == '++++'
-    @app_message.show(:lose, @game.get_game_data)
+    @answers << { :guess => answer, :marking_guess => @app_message.show(:message_guess, @game.get_game_data) }
+    @game_msg = @game.end_of_game? ? @app_message.show(:game_end, @game.get_game_data) : @app_message.show(:next_step)
   end
 
   def command_hint
-    @game_msg = @game.hint ? 'Hint: ' + @game.show_hint : @app_message.show(:no_hint)
+    if @game.hint
+      @hint = @game.show_hint
+      @game_msg = 'Hint: ' + @hint
+      @request.session[:hint] = @hint
+    else
+      @game_msg = @app_message.show(:no_hint)
+    end
     redirect_to('game')
   end
 
@@ -79,7 +83,7 @@ class Racker
 
   def command_restart
     @request.session.clear
-    @request.session[:game] = SvatokCodebreaker::Game.new(@game.instance_variable_get(:@player_name))
+    @request.session[:game] = SvatokCodebreaker::Game.new(@game.codebreaker_name)
     @game_msg = @app_message.show(:restart_game)
     redirect_to('game')
   end
@@ -100,5 +104,4 @@ class Racker
       response.redirect('/' + path)
     end
   end
-
 end

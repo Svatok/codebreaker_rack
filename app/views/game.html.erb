@@ -1,33 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Codebreaker</title>
+    <title>Codebreaker</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
 </head>
 <body>
-  <% if @game.end_of_game? %>
-    <h2><%= game_completition %> </h2>
-  <% else %>
-    <h3 class="text-center">
-      You have <%= @game.attempts.to_s %> attempts
-    </h3>
-    <table class="table table-hover">
+  <div class="center">
+    <h1>Hello <%= @game.codebreaker_name %>!</h1>
+    <table class='dialog_content'>
       <tr>
-        <td><%= @game_msg unless @game_msg.nil? %></td>
+        <td colspan="3"><div class = 'message'><%= @game_msg %></div></td>
       </tr>
-      <tr class="info">
-        <td><h5><%= @request.session[:guess] unless @request.session[:guess].nil? %></h5></td>
-        <td><h5><%= @app_message.show(:message_guess, @game.get_game_data) unless @game.marking_guess.nil? %></h5></td>
+        <td>
+          <div class = 'guess_form'>
+            <form class="form_guess" name="guess_form" method="post" action="/game">
+            <% if @game.end_of_game? %>
+              <input type="text" name="guess" placeholder="Guess" disabled>
+              <input type="submit" name="submit" value="Ok" disabled>
+            <% else %>
+              <input type="text" name="guess" placeholder="Guess" required autofocus>
+              <input type="submit" name="submit" value="Ok">
+            <% end %>
+            </form>
+          </div>
+          <div class = 'attempts'>
+            Attempts left: <%= @game.attempts.to_s %>
+          </div>
+        </td>
+        <td>
+          <div class = 'hint'><%= @game.hint ? '<a href="/hint">Hint</a>' : 'Hint: ' + @hint %></div>
+        </td>
+        <td>
+          <div class = 'menu'>
+            <%= '<a href="/save">Save result</a>' if @game.end_of_game? %>
+            <a href="/restart">Restart</a>
+            <a href="/exit">Exit</a>
+          </div>
+        </td>
       </tr>
     </table>
-    <form class="form" name="guess_form" method="post" action="/game">
-      <input type="text" name="guess" placeholder="Please, enter guess" required autofocus>
-      <input type="submit" name="submit" value="Ok">
-    </form>
-  <% end %>
-  <%= '<a href="/save">Save score</a>' if @game.end_of_game? %>
-  <%= '<a href="/hint">Hint</a>' if @game.hint %>
-  <a href="/restart">Restart</a>
-  <a href="/exit">Exit</a>
+    <table class = 'attempts_history'>
+      <thead>
+        <tr>
+          <th>Attempt #</th>
+          <th>Guess</th>
+          <th>Respond</th>
+        </tr>
+      </thead>
+      <% @answers.each_with_index do | answer, i| %>
+        <tr class="info">
+          <td><%= i+1 %></td>
+          <td><%= answer[:guess] %></td>
+          <td><%= answer[:marking_guess] %></td>
+        </tr>
+      <% end %>
+    </table>
 </body>
 </html>

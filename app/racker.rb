@@ -10,49 +10,39 @@ class Racker
   def initialize(env)
     @request = Rack::Request.new(env)
     @app_message = SvatokCodebreaker::GameMessage.new
-    @exit_game = @request.session[:exit_game].nil?
     @game = @request.session[:game]
     @game_msg = @request.session[:game_msg]
     @hint = @request.session[:hint]
     @answers = @request.session[:answers].nil? ? [] : @request.session[:answers]
   end
 
-  def response
-    @path = @request.path
-    case @request.path
-      when "/" then
-        @request.session.clear
-        Rack::Response.new(render("index.html.erb"))
-      when "/game" then run_game
-      when "/hint" then command_hint
-      when "/exit" then command_exit
-      when "/restart" then command_restart
-      when "/save" then command_save
-      else Rack::Response.new("404", 404)
-    end
+def response
+  if @request.path == '/'
+    @request.session.clear
+    Rack::Response.new(render('index.html.erb'))
+  elsif %w(exit restart hint save game).include?(@request.path[1..-1])
+    send(('command_' + @request.path[1..-1]).to_sym)
+  else
+    Rack::Response.new('404 (NOT FOUND)', 404)
   end
+end
 
   def render(template)
     path = File.expand_path("../views/#{template}", __FILE__)
     ERB.new(File.read(path)).result(binding)
   end
 
-  def run_game
-    if @game.nil?
-      start_game
-    else
-      game_step
-      @request.session[:answers] = @answers
-      @request.session[:game_msg] = @game_msg
-      Rack::Response.new(render('game.html.erb'))
-    end
+  def command_game
+    return start_game if @game.nil?
+    game_step
+    @request.session[:answers] = @answers
+    @request.session[:game_msg] = @game_msg
+    Rack::Response.new(render('game.html.erb'))
   end
 
   def start_game
     return redirect_to if @request.params['codebreaker_name'].nil?
-    @request.session[:game] = SvatokCodebreaker::Game.new(@request.params['codebreaker_name'])
-    @request.session[:exit_game] = false
-    @game = @request.session[:game]
+    @game = @request.session[:game] = SvatokCodebreaker::Game.new(@request.params['codebreaker_name'])
     @game_msg = @app_message.show(:start)
     Rack::Response.new(render('game.html.erb'))
   end
@@ -89,11 +79,12 @@ class Racker
   end
 
   def command_save
-    @game_msg = @app_message.show(:not_available) unless @game.end_of_game?
     if @game.end_of_game?
       @request.session[:command] = 'save'
       @game.save_game
       @game_msg = @app_message.show(:saved)
+    else
+      @game_msg = @app_message.show(:not_available)
     end
     redirect_to('game')
   end

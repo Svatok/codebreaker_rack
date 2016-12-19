@@ -9,6 +9,7 @@ GEM
       slop (~> 3.4)
     rack (2.0.1)
     slop (3.6.0)
+    svatok_codebreaker (0.1.0)
 
 PLATFORMS
   ruby
@@ -16,6 +17,7 @@ PLATFORMS
 DEPENDENCIES
   pry
   rack
+  svatok_codebreaker
 
 BUNDLED WITH
    1.13.6

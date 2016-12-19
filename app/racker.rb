@@ -1,6 +1,9 @@
-require_relative 'svatok_codebreaker.rb'
+require 'svatok_codebreaker'
 require 'erb'
-require 'uri'
+#require_relative './lib/'
+lib_root = File.dirname(File.absolute_path(__FILE__))
+Dir.glob(lib_root + '/lib/*.rb') { |file| require file }
+#require 'uri'
 
 class Racker
   def self.call(env)
@@ -9,7 +12,7 @@ class Racker
 
   def initialize(env)
     @request = Rack::Request.new(env)
-    @app_message = SvatokCodebreaker::GameMessage.new
+    @app_message = WebGameMessage.new
     @game = @request.session[:game]
     @game_msg = @request.session[:game_msg]
     @hint = @request.session[:hint]
@@ -17,11 +20,12 @@ class Racker
   end
 
 def response
+  path_without_slash = @request.path[1..-1]
   if @request.path == '/'
     @request.session.clear
     Rack::Response.new(render('index.html.erb'))
-  elsif %w(exit restart hint save game).include?(@request.path[1..-1])
-    send(('command_' + @request.path[1..-1]).to_sym)
+  elsif %w(exit restart hint save game).include?(path_without_slash)
+    send(('command_' + path_without_slash).to_sym)
   else
     Rack::Response.new('404 (NOT FOUND)', 404)
   end
@@ -42,7 +46,7 @@ end
 
   def start_game
     return redirect_to if @request.params['codebreaker_name'].nil?
-    @game = @request.session[:game] = SvatokCodebreaker::Game.new(@request.params['codebreaker_name'])
+    @game = @request.session[:game] = WebGame.new(@request.params['codebreaker_name'])
     @game_msg = @app_message.show(:start)
     Rack::Response.new(render('game.html.erb'))
   end
@@ -73,7 +77,7 @@ end
 
   def command_restart
     @request.session.clear
-    @request.session[:game] = SvatokCodebreaker::Game.new(@game.codebreaker_name)
+    @request.session[:game] = WebGame.new(@game.codebreaker_name)
     @game_msg = @app_message.show(:restart_game)
     redirect_to('game')
   end
@@ -82,6 +86,7 @@ end
     if @game.end_of_game?
       @request.session[:command] = 'save'
       @game.save_game
+      binding.pry
       @game_msg = @app_message.show(:saved)
     else
       @game_msg = @app_message.show(:not_available)

@@ -11,6 +11,7 @@
       <tr>
         <td colspan="3"><div class = 'message'><%= @game_msg %></div></td>
       </tr>
+      <tr>
         <td>
           <div class = 'guess_form'>
             <form class="form_guess" name="guess_form" method="post" action="/game">
@@ -33,6 +34,7 @@
         <td>
           <div class = 'menu'>
             <%= '<a href="/save">Save result</a>' if @game.end_of_game? %>
+            <a href="/score">Score</a>
             <a href="/restart">Restart</a>
             <a href="/exit">Exit</a>
           </div>

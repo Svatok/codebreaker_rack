@@ -1,9 +1,8 @@
 require 'svatok_codebreaker'
 require 'erb'
-#require_relative './lib/'
+require 'yaml'
 lib_root = File.dirname(File.absolute_path(__FILE__))
 Dir.glob(lib_root + '/lib/*.rb') { |file| require file }
-#require 'uri'
 
 class Racker
   def self.call(env)
@@ -24,7 +23,7 @@ def response
   if @request.path == '/'
     @request.session.clear
     Rack::Response.new(render('index.html.erb'))
-  elsif %w(exit restart hint save game).include?(path_without_slash)
+  elsif %w(exit restart hint save score game).include?(path_without_slash)
     send(('command_' + path_without_slash).to_sym)
   else
     Rack::Response.new('404 (NOT FOUND)', 404)
@@ -56,8 +55,12 @@ end
     return if answer.nil?
     return @game_msg = @app_message.show(:not_valid_answer) unless @game.valid_guess?(answer)
     @game.submit_guess(answer)
-    @answers << { :guess => answer, :marking_guess => @app_message.show(:message_guess, @game.get_game_data) }
+    @answers << { guess: answer, marking_guess: @app_message.show(:message_guess, @game.get_game_data) }
     @game_msg = @game.end_of_game? ? @app_message.show(:game_end, @game.get_game_data) : @app_message.show(:next_step)
+  end
+
+  def command_score
+    Rack::Response.new(render('score.html.erb'))
   end
 
   def command_hint
@@ -86,7 +89,6 @@ end
     if @game.end_of_game?
       @request.session[:command] = 'save'
       @game.save_game
-      binding.pry
       @game_msg = @app_message.show(:saved)
     else
       @game_msg = @app_message.show(:not_available)

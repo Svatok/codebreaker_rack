@@ -1,0 +1,50 @@
+---
+1:
+  :codebreaker_name: Svat
+  :secret_code: '6453'
+  :marking_guess: ''
+  :attempts: 0
+  :hint: not used
+  :game_date: 20/12/2016
+2:
+  :codebreaker_name: Svatok
+  :secret_code: '6453'
+  :marking_guess: "++++"
+  :attempts: 7
+  :hint: not used
+  :game_date: 20/12/2016
+3:
+  :codebreaker_name: Svatok1
+  :secret_code: '1413'
+  :marking_guess: "++++"
+  :attempts: 4
+  :hint: not used
+  :game_date: 20/12/2016
+4:
+  :codebreaker_name: Svatok2
+  :secret_code: '1223'
+  :marking_guess: "++++"
+  :attempts: 5
+  :hint: used
+  :game_date: 19/12/2016
+5:
+  :codebreaker_name: ssss
+  :secret_code: '5534'
+  :marking_guess: "++++"
+  :attempts: 5
+  :hint: not used
+  :game_date: 20/12/2016
+6:
+  :codebreaker_name: Svat
+  :secret_code: '6254'
+  :marking_guess: "++++"
+  :attempts: 3
+  :hint: not used
+  :game_date: 21/12/2016
+7:
+  :codebreaker_name: '1234'
+  :secret_code: '4456'
+  :marking_guess: "++++"
+  :attempts: 5
+  :hint: not used
+  :game_date: 21/12/2016

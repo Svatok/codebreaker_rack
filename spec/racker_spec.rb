@@ -4,127 +4,119 @@ describe Racker do
   let(:app) { Rack::Builder.parse_file('config.ru').first }
 
   context 'get to /' do
-    let(:response) { get '/' }
-    it 'returns the status 200' do
-      expect(response.status).to eq 200
-    end
-    it 'returns index page' do
-      file = File.open('./spec/standarts/index.html', 'rb')
-      contents = file.read
-      expect(response.body).to eq contents
-    end
-    it 'clear session' do
-      env('rack.session', game: WebGame.new('Test'))
-      response
-      expect(last_request.env['rack.session']).to be_empty
-    end
-  end
+    before { visit '/' }
 
-  context 'game start' do
-    let(:response) { get '/game', 'codebreaker_name' => 'Test' }
-    it 'returns the status 200' do
-      expect(response.status).to eq 200
+    scenario 'returns the status 200' do
+      expect(status_code).to be(200)
     end
-    it 'start session' do
-      response
-      expect(last_request.env['rack.session']).not_to be_empty
+    scenario 'displays CODEBREAKER on index page' do
+      expect(page).to have_content 'CODEBREAKER'
     end
-    it 'returns page with game process: game start' do
-      content = File.open('./spec/standarts/game_start.html', 'rb').read
-      expect(response.body.gsub(/\s+/, '')).to eq content.gsub(/\s+/, '')
-    end
-  end
-
-  context 'game step' do
-    let(:response) do
-      game_obj = WebGame.new('Test')
-      game_obj.instance_variable_set(:@secret_code, '1255')
-      get '/game', { 'guess' => '1234' }, { 'rack.session' => { game: game_obj } }
-    end
-
-    it 'returns the status 200' do
-      expect(response.status).to eq 200
-    end
-    it 'returns page with game process: game step' do
-      response
-      content = File.open('./spec/standarts/game_step.html', 'rb').read
-      expect(last_response.body.gsub(/\s+/, '')).to eq content.gsub(/\s+/, '')
-    end
-  end
-
-  context 'show score' do
-    let(:response) do
-      games_data = YAML.load(File.open('./spec/standarts/scores.yml'))
-      get '/score', { 'guess' => '1234' }, { 'rack.session' => { game: WebGame.new('Test') }, answers: games_data }
-    end
-
-    it 'returns the status 200' do
-      expect(response.status).to eq 200
-    end
-    it 'returns page with winner results' do
-      response
-      content = File.open('./spec/standarts/scores.html', 'rb').read
-      expect(last_response.body.gsub(/\s+/, '')).to eq content.gsub(/\s+/, '')
-    end
-  end
-
-  context 'press exit game' do
-    let(:response) { get '/exit' }
-
-    it 'redirect to /' do
-      response
-      follow_redirect!
-      expect(last_request.url).to eql('http://example.org/')
-    end
-  end
-
-  context 'press restart game' do
-    let(:game_page) { get '/game', {}, 'rack.session' => { game: WebGame.new('Test') } }
-    let(:response) { get '/restart' }
-
-    it 'create new game object' do
-      game_page
-      old_game = last_request.env['rack.session'][:game]
-      response
-      expect(last_request.env['rack.session'][:game]).not_to eql(old_game)
-    end
-    it 'redirect to /game' do
-      game_page
-      response
-      follow_redirect!
-      expect(last_request.url).to eql('http://example.org/game')
-    end
-    it 'page with game include message about game restart' do
-      game_page
-      response
-      follow_redirect!
-      expect(last_response.body).to include('Game restarted. Enter guess:')
-    end
-  end
-
-  context 'press hint' do
-    let(:response) { get '/hint', {}, 'rack.session' => { game: WebGame.new('Test') } }
-
-    it 'show hint if before it was not used' do
-      response
-      follow_redirect!
-      expect(last_response.body).to include('Hint: ' + last_request.env['rack.session'][:hint])
-    end
-    it 'redirect to /game' do
-      response
-      follow_redirect!
-      expect(last_request.url).to eql('http://example.org/game')
+    scenario 'displays input for entering player name' do
+      expect(page).to have_field('codebreaker_name')
     end
   end
 
   context 'unknown request' do
-    let(:response) { get '/unknown' }
+    before { visit '/wrong' }
 
-    it 'returns 404 response' do
-      expect(response.status).to eql(404)
+    scenario 'returns the status 404' do
+      expect(status_code).to be(404)
     end
-    it 'returns page 404' do
-      expect(response.body).to eql('404 (NOT FOUND)')
+    scenario 'returns page 404' do
+      expect(page).to have_content '404 (NOT FOUND)'
+    end
+  end
+
+  context 'game start' do
+    before do
+      visit '/'
+      fill_in('codebreaker_name', with: 'Test')
+      click_button('Break the code!')
+    end
+
+    scenario 'returns the status 200' do
+      expect(status_code).to be(200)
+    end
+    scenario 'returns page with player name' do
+      expect(page).to have_content 'Hello Test!'
+    end
+    scenario 'returns page with message about starting game' do
+      expect(page).to have_content 'Game started. Enter guess:'
+    end
+    scenario 'returns page with 10 attempts' do
+      expect(page).to have_content 'Attempts left: 10'
+    end
+    scenario 'returns page with menu links' do
+      expect(page).to have_link('Hint')
+      expect(page).to have_link('Score')
+      expect(page).to have_link('Restart')
+      expect(page).to have_link('Exit')
+    end
+    scenario 'returns page with input for entering guess' do
+      expect(page).to have_field('guess')
+    end
+  end
+
+  before do
+    page.set_rack_session(game: WebGame.new('Test'))
+    visit '/game'
+  end
+
+  context 'game step' do
+    before do
+      fill_in('guess', with: '1234')
+      click_button('Ok')
+    end
+    scenario 'returns the status 200' do
+      expect(status_code).to be(200)
+    end
+    scenario 'entered guess show in table of steps' do
+      expect(page).to have_content '1234'
+    end
+    scenario '9 attempts left' do
+      expect(page).to have_content 'Attempts left: 9'
+    end
+  end
+
+  context 'show score' do
+    before { click_link('Score') }
+
+    scenario 'returns the status 200' do
+      expect(status_code).to be(200)
+    end
+    scenario 'returns page with winner results' do
+      expect(page).to have_current_path('/score')
+    end
+    scenario 'displays table with results' do
+      expect(page).to have_css('table.attempts_history')
+    end
+  end
+
+  context 'press exit game' do
+    before { click_link('Exit') }
+
+    scenario 'redirect to /' do
+      expect(page).to have_current_path('/')
+    end
+  end
+
+  context 'press restart game' do
+    before { click_link('Restart') }
+
+    scenario 'page with game include message about game restart' do
+      expect(page).to have_content 'Game restarted. Enter guess:'
+    end
+    scenario 'returns page with 10 attempts' do
+      expect(page).to have_content 'Attempts left: 10'
+    end
+  end
+
+  context 'press hint' do
+    before { click_link('Hint') }
+
+    scenario 'show hint' do
+      expect(page).to have_content 'Hint:'
     end
   end
 end

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Codebreaker</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
+</head>
+<body>
+  <div class="center">
+    <h1>Hello <%= @game.codebreaker_name %>!</h1>
+    <table class='dialog_content'>
+      <tr>
+        <td colspan="3"><div class = 'message'><%= @game_msg %></div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class = 'guess_form'>
+            <form class="form_guess" name="guess_form" method="post" action="/game">
+            <% if @game.end_of_game? %>
+              <input type="text" name="guess" placeholder="Guess" disabled>
+              <input type="submit" name="submit" value="Ok" disabled>
+            <% else %>
+              <input type="text" name="guess" placeholder="Guess" required autofocus>
+              <input type="submit" name="submit" value="Ok">
+            <% end %>
+            </form>
+          </div>
+          <div class = 'attempts'>
+            Attempts left: <%= @game.attempts.to_s %>
+          </div>
+        </td>
+        <td>
+          <div class = 'hint'><%= @game.hint ? '<a href="/hint">Hint</a>' : 'Hint: ' + @hint %></div>
+        </td>
+        <td>
+          <div class = 'menu'>
+            <%= '<a href="/save">Save result</a>' if @game.end_of_game? %>
+            <a href="/score">Score</a>
+            <a href="/restart">Restart</a>
+            <a href="/exit">Exit</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <table class = 'attempts_history'>
+      <thead>
+        <tr>
+          <th>Attempt #</th>
+          <th>Guess</th>
+          <th>Respond</th>
+        </tr>
+      </thead>
+      <% @answers.each_with_index do | answer, i| %>
+        <tr class="info">
+          <td><%= i+1 %></td>
+          <td><%= answer[:guess] %></td>
+          <td><%= answer[:marking_guess] %></td>
+        </tr>
+      <% end %>
+    </table>
+</body>
+</html>

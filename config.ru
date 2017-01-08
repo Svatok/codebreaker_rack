@@ -2,6 +2,11 @@ require 'rubygems'
 require 'bundler'
 Bundler.require
 
-require "./app"
+require './app/racker'
 
-run App.new
+use Rack::Session::Cookie, key: 'rack.session',
+                          secret: 'secretKey'
+use RackSessionAccess::Middleware
+use Rack::Static, :urls => ["/stylesheets", "/js", "/img"], :root => "public"
+
+run Racker

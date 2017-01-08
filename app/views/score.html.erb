@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Codebreaker</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
+</head>
+<body>
+  <div class="center">
+    <h1>Hello <%= @game.codebreaker_name %>!</h1>
+    <table class='dialog_content'>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>
+          <div class = 'menu'>
+            <a href="/game">Back to game</a>
+            <a href="/restart">Restart</a>
+            <a href="/exit">Exit</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <table class = 'attempts_history'>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Attempts</th>
+          <th>Hint</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <% @game.load_winners.each_with_index do | game_data, i| %>
+        <tr class="info">
+          <td><%= i+1 %></td>
+          <td><%= game_data[:codebreaker_name] %></td>
+          <td><%= SvatokCodebreaker::ATTEMPTS - game_data[:attempts] %></td>
+          <td><%= game_data[:hint] %></td>
+          <td><%= game_data[:game_date] %></td>
+        </tr>
+      <% end %>
+    </table>
+</body>
+</html>
